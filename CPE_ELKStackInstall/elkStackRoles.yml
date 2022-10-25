@@ -1,0 +1,41 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: Update repository index for CentOS
+    tags: always
+    dnf:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: Install updates for Ubuntu
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Stopping ElasticSearch service
+    command: sudo systemctl stop elasticsearch
+
+- hosts: elasticSearch_host
+  become: true
+  become_user: root
+  roles:
+    - install-elasticsearch
+    - install-elasticsearch_centos
+
+- hosts: kibana_host
+  become: true
+  roles:
+    - kibana
+    - kibana_centos
+
+- hosts: logstash_host
+  become: true
+  roles:
+    - logstash
+    - logstash_centos

@@ -1,0 +1,88 @@
+---
+  - name: Pre-requisites for ElasticSearch (CentOS)
+    yum:
+      name:
+        - java-11-openjdk
+        - curl
+        - gnupg
+      state: latest
+
+  - name: Installing ElasticSearch rpm key (CentOS)
+    rpm_key:
+      key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      state: present
+    become: true
+
+  - name: Installing ElasticSearch 7.x rpm repository
+    yum_repository:
+      name: Elastic_7.X_repo
+      baseurl: https://artifacts.elastic.co/packages/7.x/yum
+      gpgcheck: true
+      gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      description: Elastic 7.X Repo
+    become: true
+
+  - name: Install ElasticSearch (CentOS)
+    yum:
+      name: elasticsearch
+      state: latest
+      update_cache: yes
+
+  - name: Changing cluster name (CentOS)
+    lineinfile:
+      dest: /etc/elasticsearch/elasticsearch.yml
+      line: "cluster.name: demo-elk"
+      state: present
+
+  - name: Cluster's descriptive name (CentOS)
+    lineinfile:
+      dest: /etc/elasticsearch/elasticsearch.yml
+      line: "node.name: elk-1"
+      state: present
+
+  - name: Add network.host (CentOS)
+    lineinfile:
+      dest: /etc/elasticsearch/elasticsearch.yml
+      line: "network.host: 0.0.0.0"
+      state: present
+
+  - name: Adding http.port (CentOS)
+    lineinfile:
+      dest: /etc/elasticsearch/elasticsearch.yml
+      line: "http.port: 9200"
+      state: present
+
+  - name: Adding discovery.type (CentOS)
+    lineinfile:
+      dest: /etc/elasticsearch/elasticsearch.yml
+      line: "discovery.type: single-node"
+      state: present
+
+  - name: Creating an empty file for startup-timeout.conf - 1  (CentOS)
+    file:
+      path: "/etc/systemd/system/elasticsearch.service.d"
+      state: directory
+
+  - name: Creating an empty file for startup-timeout.conf - 2 (CentOS)
+    file:
+      path: "/etc/systemd/system/elasticsearch.service.d/startup-timeout.conf"
+      state: touch
+
+  - name: Preventing service timeout (CentOS)
+    copy:
+      dest: "/etc/systemd/system/elasticsearch.service.d/startup-timeout.conf"
+      content: |
+        [Service]
+        TimeoutStartSec=3min
+
+  - name: Daemon-reload for ElasticSearch (CentOS)
+    systemd: daemon_reload=yes
+
+  - name: Enabling Elasticsearch service, making sure it is not masked (CentOS)
+    systemd:
+      name: elasticsearch
+      enabled: yes
+      masked: no
+
+ # - name: Starting ElasticSearch
+ #   systemd: state=started name=elasticsearch

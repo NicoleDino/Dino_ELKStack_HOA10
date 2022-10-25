@@ -1,0 +1,34 @@
+---
+  - name: Install Logstash with apt (Ubuntu)
+    apt:
+     name: logstash
+     update_cache: yes
+
+  - name: Updating the config file to allow outside access (Ubuntu)
+    lineinfile:
+     destfile: /etc/logstash/logstash.yml
+     regexp: 'server.host:'
+     line: 'server.host: 0.0.0.0'
+
+  - name: Defining server port (Ubuntu)
+    lineinfile:
+     destfile: /etc/logstash/logstash.yml
+     regexp: 'server.port:'
+     line: 'server.port: 5044'
+
+  - name: Defining ElasticSearch URL (Ubuntu)
+    lineinfile:
+     destfile: /etc/logstash/logstash.yml
+     regexp: 'elasticsearch.url:'
+     line: 'elasticsearch.url: "http://localhost:9200"'
+
+  - name: Enable Logstash service (Ubuntu)
+    systemd:
+      name: logstash
+      enabled: yes
+
+  - name: Start Logstash service (Ubuntu)
+    systemd:
+      name: logstash
+      state: started
+      daemon_reload: yes

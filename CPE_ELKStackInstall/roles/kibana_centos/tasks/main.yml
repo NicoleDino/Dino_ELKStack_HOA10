@@ -1,0 +1,35 @@
+---
+
+  - name: Install Kibana with yum (CentOS)
+    yum:
+     name: kibana
+     update_cache: yes
+
+  - name: Updating the config file to allow outside access (CentOS)
+    lineinfile:
+     destfile: /etc/kibana/kibana.yml
+     regexp: 'server.host:'
+     line: 'server.host: 0.0.0.0'
+
+  - name: Defining server port (CentOS)
+    lineinfile:
+     destfile: /etc/kibana/kibana.yml
+     regexp: 'server.port:'
+     line: 'server.port: 5601'
+
+  - name: Defining ElasticSearch URL (CentOS)
+    lineinfile:
+     destfile: /etc/kibana/kibana.yml
+     regexp: 'elasticsearch.url:'
+     line: 'elasticsearch.url: "http://localhost:9200"'
+
+  - name: Enable service for Kibana (CentOS)
+    systemd:
+      name: kibana
+      enabled: yes
+
+  - name: Starting Kibana (CentOS)
+    service:
+      state: started
+      name: kibana
+      daemon-reload: yes

@@ -1,0 +1,35 @@
+---
+
+  - name: Install Logstash with yum (CentOS)
+    yum:
+     name: logstash
+     update_cache: yes
+
+  - name: Updating the config file to allow outside access (CentOS)
+    lineinfile:
+     destfile: /etc/logstash/logstash.yml
+     regexp: 'server.host:'
+     line: 'server.host: 0.0.0.0'
+
+  - name: Defining server port (CentOS)
+    lineinfile:
+     destfile: /etc/logstash/logstash.yml
+     regexp: 'server.port:'
+     line: 'server.port: 5044'
+
+  - name: Defining ElasticSearch URL (CentOS)
+    lineinfile:
+     destfile: /etc/logstash/logstash.yml
+     regexp: 'elasticsearch.url:'
+     line: 'elasticsearch.url: "http://localhost:9200"'
+
+  - name: Enable Logstash service (CentOS)
+    systemd:
+      name: logstash
+      enabled: yes
+
+  - name: Start Logstash service (CentOS)
+    systemd:
+      name: logstash
+      state: started
+      daemon_reload: yes
