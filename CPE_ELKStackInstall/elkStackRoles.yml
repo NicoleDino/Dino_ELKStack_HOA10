@@ -19,23 +19,22 @@
     when: ansible_distribution == "Ubuntu"
 
   - name: Stopping ElasticSearch service
-    command: sudo systemctl stop elasticsearch
+    command: systemctl stop elasticsearch
 
 - hosts: elasticSearch_host
   become: true
-  become_user: root
   roles:
-    - install-elasticsearch
-    - install-elasticsearch_centos
+     #- install-elasticsearch
+     - install-elasticsearch_centos
 
 - hosts: kibana_host
   become: true
   roles:
-    - kibana
+    #- kibana
     - kibana_centos
 
 - hosts: logstash_host
   become: true
   roles:
-    - logstash
+    #- logstash
     - logstash_centos

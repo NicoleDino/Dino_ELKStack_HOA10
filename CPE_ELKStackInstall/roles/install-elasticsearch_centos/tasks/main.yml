@@ -6,12 +6,14 @@
         - curl
         - gnupg
       state: latest
+    when: ansible_distribution == "CentOS"
 
   - name: Installing ElasticSearch rpm key (CentOS)
     rpm_key:
       key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
       state: present
     become: true
+    when: ansible_distribution == "CentOS"
 
   - name: Installing ElasticSearch 7.x rpm repository
     yum_repository:
@@ -21,52 +23,61 @@
       gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
       description: Elastic 7.X Repo
     become: true
+    when: ansible_distribution == "CentOS"
 
   - name: Install ElasticSearch (CentOS)
     yum:
       name: elasticsearch
       state: latest
       update_cache: yes
+    when: ansible_distribution == "CentOS"
 
   - name: Changing cluster name (CentOS)
     lineinfile:
       dest: /etc/elasticsearch/elasticsearch.yml
       line: "cluster.name: demo-elk"
       state: present
+    when: ansible_distribution == "CentOS"
 
   - name: Cluster's descriptive name (CentOS)
     lineinfile:
       dest: /etc/elasticsearch/elasticsearch.yml
       line: "node.name: elk-1"
       state: present
+    when: ansible_distribution == "CentOS"
 
   - name: Add network.host (CentOS)
     lineinfile:
       dest: /etc/elasticsearch/elasticsearch.yml
       line: "network.host: 0.0.0.0"
       state: present
+    when: ansible_distribution == "CentOS"
 
   - name: Adding http.port (CentOS)
     lineinfile:
       dest: /etc/elasticsearch/elasticsearch.yml
       line: "http.port: 9200"
       state: present
+    when: ansible_distribution == "CentOS"
 
   - name: Adding discovery.type (CentOS)
     lineinfile:
       dest: /etc/elasticsearch/elasticsearch.yml
       line: "discovery.type: single-node"
       state: present
+    when: ansible_distribution == "CentOS"
 
   - name: Creating an empty file for startup-timeout.conf - 1  (CentOS)
     file:
       path: "/etc/systemd/system/elasticsearch.service.d"
       state: directory
+    when: ansible_distribution == "CentOS"
 
   - name: Creating an empty file for startup-timeout.conf - 2 (CentOS)
     file:
       path: "/etc/systemd/system/elasticsearch.service.d/startup-timeout.conf"
       state: touch
+    when: ansible_distribution == "CentOS"
 
   - name: Preventing service timeout (CentOS)
     copy:
@@ -74,15 +85,20 @@
       content: |
         [Service]
         TimeoutStartSec=3min
+    when: ansible_distribution == "CentOS"
 
   - name: Daemon-reload for ElasticSearch (CentOS)
     systemd: daemon_reload=yes
+    when: ansible_distribution == "CentOS"
 
   - name: Enabling Elasticsearch service, making sure it is not masked (CentOS)
     systemd:
       name: elasticsearch
       enabled: yes
       masked: no
+    when: ansible_distribution == "CentOS"
 
  # - name: Starting ElasticSearch
  #   systemd: state=started name=elasticsearch
+ #   when: ansible_distribution == "CentOS"
+

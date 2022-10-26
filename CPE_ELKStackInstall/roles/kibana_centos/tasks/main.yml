@@ -4,32 +4,39 @@
     yum:
      name: kibana
      update_cache: yes
+    when: ansible_distribution == "CentOS"
 
   - name: Updating the config file to allow outside access (CentOS)
     lineinfile:
      destfile: /etc/kibana/kibana.yml
      regexp: 'server.host:'
      line: 'server.host: 0.0.0.0'
+    when: ansible_distribution == "CentOS"
 
   - name: Defining server port (CentOS)
     lineinfile:
      destfile: /etc/kibana/kibana.yml
      regexp: 'server.port:'
      line: 'server.port: 5601'
+    when: ansible_distribution == "CentOS"
 
   - name: Defining ElasticSearch URL (CentOS)
     lineinfile:
      destfile: /etc/kibana/kibana.yml
      regexp: 'elasticsearch.url:'
      line: 'elasticsearch.url: "http://localhost:9200"'
+    when: ansible_distribution == "CentOS"
 
   - name: Enable service for Kibana (CentOS)
     systemd:
       name: kibana
       enabled: yes
+    when: ansible_distribution == "CentOS"
 
   - name: Starting Kibana (CentOS)
     service:
       state: started
       name: kibana
       daemon-reload: yes
+    when: ansible_distribution == "CentOS"
+

@@ -4,32 +4,39 @@
     yum:
      name: logstash
      update_cache: yes
+    when: ansible_distribution == "CentOS"
 
   - name: Updating the config file to allow outside access (CentOS)
     lineinfile:
      destfile: /etc/logstash/logstash.yml
      regexp: 'server.host:'
      line: 'server.host: 0.0.0.0'
+    when: ansible_distribution == "CentOS"
 
   - name: Defining server port (CentOS)
     lineinfile:
      destfile: /etc/logstash/logstash.yml
      regexp: 'server.port:'
      line: 'server.port: 5044'
+    when: ansible_distribution == "CentOS"
 
   - name: Defining ElasticSearch URL (CentOS)
     lineinfile:
      destfile: /etc/logstash/logstash.yml
      regexp: 'elasticsearch.url:'
      line: 'elasticsearch.url: "http://localhost:9200"'
+    when: ansible_distribution == "CentOS"
 
   - name: Enable Logstash service (CentOS)
     systemd:
       name: logstash
       enabled: yes
+    when: ansible_distribution == "CentOS"
 
   - name: Start Logstash service (CentOS)
     systemd:
       name: logstash
       state: started
       daemon_reload: yes
+    when: ansible_distribution == "CentOS"
+

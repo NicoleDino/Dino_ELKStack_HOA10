@@ -4,32 +4,39 @@
     apt:
      name: kibana
      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
 
   - name: Updating the config file to allow outside access (Ubuntu)
     lineinfile:
      destfile: /etc/kibana/kibana.yml
      regexp: 'server.host:'
      line: 'server.host: 0.0.0.0'
+    when: ansible_distribution == "Ubuntu"
 
   - name: Defining server port (Ubuntu)
     lineinfile:
      destfile: /etc/kibana/kibana.yml
      regexp: 'server.port:'
      line: 'server.port: 5601'
+    when: ansible_distribution == "Ubuntu"
 
   - name: Defining ElasticSearch URL (Ubuntu)
     lineinfile:
      destfile: /etc/kibana/kibana.yml
      regexp: 'elasticsearch.url:'
      line: 'elasticsearch.url: "http://localhost:9200"'
+    when: ansible_distribution == "Ubuntu"
 
   - name: Enable Kibana (Ubuntu)
     systemd:
       name: kibana
       enabled: yes
+    when: ansible_distribution == "Ubuntu"
 
   - name: Starting Kibana (Ubuntu)
     service:
       name: kibana
       state: started
       daemon-reload: yes
+    when: ansible_distribution == "Ubuntu"
+
